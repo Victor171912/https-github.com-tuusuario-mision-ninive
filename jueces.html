@@ -351,8 +351,8 @@ h1 {
 }
 
 header p { color: var(--texto-suave); }
-.acciones-header { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; position: relative; z-index: 5; }
-.btn-portada { position: static; padding: 9px 14px; color: #06221f; border: 2px solid var(--turquesa); border-radius: 11px; background: var(--turquesa); box-shadow: 0 5px 18px rgba(0, 0, 0, .35), 0 0 18px rgba(85, 234, 209, .3); font-size: 13px; font-weight: 800; text-decoration: none; }
+.acciones-header { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; position: relative; z-index: 5; flex-wrap: nowrap; }
+.btn-portada { position: static; padding: 9px 14px; color: #06221f; border: 2px solid var(--turquesa); border-radius: 11px; background: var(--turquesa); box-shadow: 0 5px 18px rgba(0, 0, 0, .35), 0 0 18px rgba(85, 234, 209, .3); font-size: 13px; font-weight: 800; text-decoration: none; white-space: nowrap; }
 header h1, header p { padding-left: 90px; }
 
 #barra-progreso-contenedor { height: 7px; background: #10283c; }
@@ -507,8 +507,9 @@ button:hover:not(:disabled),
     .logo-esquina { top: 10px; left: 10px; width: 48px; height: 48px; }
     header h1,
     header p { padding-left: 58px; padding-right: 58px; }
-    .acciones-header { margin-top: 10px; gap: 8px; flex-wrap: wrap; }
+    .acciones-header { margin-top: 10px; gap: 8px; flex-wrap: nowrap; }
     .btn-portada { padding: 8px 11px; }
+    .btn-fullscreen { padding: 8px 10px; font-size: .75rem; white-space: nowrap; }
 }
 
 @media (max-width: 600px) {
