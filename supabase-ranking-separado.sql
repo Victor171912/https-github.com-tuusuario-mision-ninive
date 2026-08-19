@@ -43,11 +43,24 @@ create unique index if not exists ranking_jueces_nombre_unico
     on public.ranking_jueces (lower(trim(nombre)));
 
 -- Conserva en Jonás los puntajes que estaban en la tabla compartida anterior.
-insert into public.ranking_jonas (nombre, puntaje, creado_en)
-select distinct on (lower(trim(nombre))) nombre, puntaje, creado_en
-from public.ranking
-order by lower(trim(nombre)), puntaje desc, creado_en asc
-on conflict do nothing;
+do $$
+begin
+    if to_regclass('public.ranking') is not null then
+        insert into public.ranking_jonas (nombre, puntaje, creado_en)
+        select antiguo.nombre, antiguo.puntaje, antiguo.creado_en
+        from (
+            select distinct on (lower(trim(nombre)))
+                nombre, puntaje, creado_en
+            from public.ranking
+            order by lower(trim(nombre)), puntaje desc, creado_en asc
+        ) as antiguo
+        where not exists (
+            select 1
+            from public.ranking_jonas actual
+            where lower(trim(actual.nombre)) = lower(trim(antiguo.nombre))
+        );
+    end if;
+end $$;
 
 insert into public.ranking_jonas (nombre, puntaje)
 select inicial.nombre, inicial.puntaje
