@@ -22,6 +22,9 @@ create policy "ranking público: insertar"
     to anon, authenticated
     with check (char_length(nombre) between 1 and 30 and puntaje >= 0);
 
+create unique index if not exists ranking_nombre_unico
+    on public.ranking (lower(trim(nombre)));
+
 insert into public.ranking (nombre, puntaje)
 select * from (values
     ('Victor', 1555),
