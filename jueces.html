@@ -351,7 +351,8 @@ h1 {
 }
 
 header p { color: var(--texto-suave); }
-.btn-portada { position: absolute; top: 16px; right: 18px; z-index: 5; padding: 10px 16px; color: #06221f; border: 2px solid var(--turquesa); border-radius: 11px; background: var(--turquesa); box-shadow: 0 5px 18px rgba(0, 0, 0, .35), 0 0 18px rgba(85, 234, 209, .3); font-size: 13px; font-weight: 800; text-decoration: none; }
+.acciones-header { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; position: relative; z-index: 5; }
+.btn-portada { position: static; padding: 9px 14px; color: #06221f; border: 2px solid var(--turquesa); border-radius: 11px; background: var(--turquesa); box-shadow: 0 5px 18px rgba(0, 0, 0, .35), 0 0 18px rgba(85, 234, 209, .3); font-size: 13px; font-weight: 800; text-decoration: none; }
 header h1, header p { padding-left: 90px; }
 
 #barra-progreso-contenedor { height: 7px; background: #10283c; }
@@ -492,6 +493,9 @@ button:hover:not(:disabled),
 }
 
 .btn-fullscreen {
+    position: static;
+    transform: none;
+    margin: 0;
     background: rgba(169, 156, 255, 0.2);
     border: 1px solid rgba(169, 156, 255, 0.45);
     color: #eeeaff;
@@ -503,12 +507,13 @@ button:hover:not(:disabled),
     .logo-esquina { top: 10px; left: 10px; width: 48px; height: 48px; }
     header h1,
     header p { padding-left: 58px; padding-right: 58px; }
-    .btn-portada { top: 10px; right: 10px; padding: 9px 12px; }
+    .acciones-header { margin-top: 10px; gap: 8px; flex-wrap: wrap; }
+    .btn-portada { padding: 8px 11px; }
 }
 
 @media (max-width: 600px) {
     header { padding: 12px 5px; }
-    .btn-fullscreen { position: relative; right: auto; top: auto; transform: none; margin-top: 6px; display: inline-block; }
+    .btn-fullscreen { position: static; right: auto; top: auto; transform: none; margin-top: 0; display: inline-block; }
 }
 </style>
 </head>
@@ -517,10 +522,12 @@ button:hover:not(:disabled),
 
 <header>
     <img class="logo-esquina" src="logo.png" alt="Logo Creciendo en amor para servir a otros">
-    <a class="btn-portada" href="index.html">← Atrás</a>
     <h1>MISIÓN JUECES</h1>
     <p>Desafío bíblico sobre el Libro de Jueces · 47 preguntas</p>
-    <button class="btn-fullscreen" onclick="toggleFullscreen()">📺 Pantalla Completa</button>
+    <div class="acciones-header">
+        <button class="btn-fullscreen" onclick="toggleFullscreen()">📺 Pantalla Completa</button>
+        <a class="btn-portada" href="index.html">← Atrás</a>
+    </div>
 </header>
 <div id="barra-progreso-contenedor"><div id="barra-progreso"></div></div>
 
