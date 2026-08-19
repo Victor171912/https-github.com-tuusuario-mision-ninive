@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Nínive · Desafío Bíblico sobre Jonás</title>
+
+<style>
+/* ========= CONFIGURACIÓN GLOBAL Y ESCALADO ARMÓNICO ========= */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #ffd9e6 0%, #ffb6c9 35%, #f582ae 70%, #d9578f 100%);
+    background-attachment: fixed;
+    color: #5c1a3a;
+    text-align: center;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+header {
+    background: linear-gradient(135deg, #e0578f, #c8447a);
+    padding: clamp(10px, 2vh, 25px) 15px;
+    box-shadow: 0 4px 20px rgba(140,20,70,.35);
+    position: relative;
+    flex-shrink: 0;
+    border-bottom: 4px solid #ffe0a3;
+}
+
+h1 {
+    margin: 0;
+    color: #fff3d6;
+    font-size: clamp(1.3rem, 3.5vw, 2.5rem);
+    text-shadow: 0 3px 4px rgba(0,0,0,0.25);
+}
+
+header p {
+    margin: 5px 0 0 0;
+    color: #ffe9f2;
+    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+}
+
+#barra-progreso-contenedor {
+    width: 100%;
+    height: clamp(4px, 0.8vh, 8px);
+    background: #7a1f4d;
+    position: relative;
+    flex-shrink: 0;
+}
+
+#barra-progreso {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd166, #ff6fa5);
+    transition: width 0.4s ease;
+}
+
+/* ========= CONTENEDOR PRINCIPAL ========= */
+#contenedor {
+    width: 95%;
+    max-width: 1200px;
+    margin: auto;
+    padding: clamp(10px, 2vw, 30px);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========= ELEMENTOS DEL JUEGO ========= */
+#nivel {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    color: #8a1150;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+#puntaje {
+    font-size: clamp(1rem, 1.8vw, 1.4rem);
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.55);
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 20px;
+    color: #8a1150;
+    box-shadow: 0 2px 8px rgba(140,20,70,0.15);
+}
+
+#temporizador {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    color: #d9578f;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-shadow: 0 0 12px rgba(217,87,143,0.4);
+    line-height: 1;
+}
+
+.tiempo-critico {
+    animation: pulso 0.9s infinite alternate;
+    color: #c8102e !important;
+}
+@keyframes pulso {
+    from { transform: scale(1); }
+    to { transform: scale(1.12); }
+}
+
+#pregunta {
+    font-size: clamp(1.2rem, 2.8vw, 2.2rem);
+    margin: clamp(10px, 2vh, 25px) 0;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #6d1240;
+}
+
+/* ========= OPCIONES Y BOTONES ESCALABLES ========= */
+.opcion {
+    display: block;
+    width: 100%;
+    max-width: 850px;
+    margin: clamp(6px, 1.2vh, 14px) auto;
+    padding: clamp(12px, 2vh, 20px);
+    border: 2px solid #f2a6c4;
+    border-radius: 14px;
+    background: #fff5f9;
+    color: #7a1f4d;
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(140,20,70,0.1);
+}
+
+.opcion:hover:not(:disabled) {
+    background: #ffe0ec;
+    border-color: #d9578f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(140,20,70,0.2);
+}
+
+.correcta {
+    background: #6bbf8e !important;
+    border-color: #6bbf8e !important;
+    color: #ffffff !important;
+}
+
+.incorrecta {
+    background: #e35d78 !important;
+    border-color: #e35d78 !important;
+    color: #ffffff !important;
+}
+
+button, .btn-accion {
+    padding: clamp(8px, 1.5vh, 16px) clamp(16px, 2vw, 32px);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px;
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+    background: linear-gradient(135deg, #ffd166, #ffb84d);
+    color: #6d1240;
+    font-weight: bold;
+    transition: all 0.2s;
+    box-shadow: 0 3px 8px rgba(140,20,70,0.2);
+}
+
+button:hover:not(:disabled), .btn-accion:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ffe0a3, #ffd166);
+    box-shadow: 0 4px 12px rgba(140,20,70,0.3);
+}
+
+#siguiente {
+    display: none;
+    background: linear-gradient(135deg, #ff8fb3, #e0578f);
+    color: #fff3d6;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    padding: clamp(10px, 1.8vh, 18px) clamp(20px, 3vw, 40px);
+    margin-top: 15px;
+}
+
+.panel-comodines {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.comodin {
+    background: linear-gradient(135deg, #ffe0a3, #ffd166);
+    color: #6d1240;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: clamp(6px, 1vh, 10px) clamp(12px, 1.5vw, 20px);
+    font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+}
+
+#resultado {
+    margin-top: 15px;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: bold;
+    color: #6d1240;
+}
+
+.caja-explicacion {
+    background: rgba(255, 245, 249, 0.95);
+    border-left: 5px solid #d9578f;
+    padding: clamp(10px, 1.5vh, 18px);
+    margin: 15px auto;
+    max-width: 850px;
+    border-radius: 0 8px 8px 0;
+    text-align: left;
+    font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+    line-height: 1.4;
+    color: #6d1240;
+    box-shadow: 0 2px 10px rgba(140,20,70,0.12);
+}
+
+.btn-fullscreen {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #ffe0a3, #ffd166);
+    color: #6d1240;
+    border: none;
+    padding: 8px 14px;
+    font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.caja-votacion-envivo {
+    background: linear-gradient(135deg, #fff0f6, #ffe0ec);
+    padding: clamp(12px, 2vh, 20px);
+    border-radius: 12px;
+    margin: 15px auto;
+    max-width: 650px;
+    box-shadow: 0 6px 20px rgba(140,20,70,0.25);
+    border: 2px solid #ffd166;
+    color: #6d1240;
+}
+
+#ranking {
+    margin-top: 20px;
+    background: rgba(255,255,255,0.5);
+    padding: 15px;
+    border-radius: 10px;
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    color: #6d1240;
+}
+
+.input-nombre {
+    padding: 12px;
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    border-radius: 8px;
+    border: 2px solid #f2a6c4;
+    background: #fff5f9;
+    color: #6d1240;
+    margin-bottom: 15px;
+    width: 80%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.bono-aviso {
+    color: #2a8a5f;
+    font-size: clamp(0.85rem, 1.4vw, 1rem);
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+}
+
+/* ========= NUEVA IDENTIDAD VISUAL: MISIÓN NÍNIVE ========= */
+:root {
+    --noche: #081522;
+    --panel: rgba(15, 36, 56, 0.86);
+    --panel-claro: rgba(24, 52, 77, 0.9);
+    --turquesa: #55ead1;
+    --turquesa-profundo: #17bfa9;
+    --coral: #ff8d70;
+    --lavanda: #a99cff;
+    --texto: #edfaff;
+    --texto-suave: #9bb2c4;
+}
+
+html { background: var(--noche); }
+
+body {
+    background:
+        radial-gradient(circle at 8% 10%, rgba(85, 234, 209, 0.15), transparent 28%),
+        radial-gradient(circle at 92% 12%, rgba(169, 156, 255, 0.18), transparent 30%),
+        radial-gradient(circle at 50% 110%, rgba(255, 141, 112, 0.15), transparent 36%),
+        var(--noche);
+    color: var(--texto);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body::before,
+body::after { display: none; }
+
+header {
+    background: linear-gradient(135deg, rgba(10, 31, 51, 0.97), rgba(28, 47, 76, 0.97));
+    border-bottom: 2px solid var(--turquesa);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+    padding: clamp(18px, 3vh, 32px) 15px;
+}
+
+.logo-esquina {
+    position: absolute;
+    top: 12px;
+    left: 18px;
+    width: 58px;
+    height: 58px;
+    padding: 4px;
+    object-fit: contain;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+}
+
+header h1,
+header p { padding-left: 72px; padding-right: 72px; }
+
+h1 {
+    color: var(--texto);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 22px rgba(85, 234, 209, 0.16);
+}
+
+header p { color: var(--texto-suave); }
+
+#barra-progreso-contenedor { height: 7px; background: #10283c; }
+
+#barra-progreso {
+    background: linear-gradient(90deg, var(--turquesa), var(--lavanda), var(--coral));
+    box-shadow: 0 0 16px rgba(85, 234, 209, 0.55);
+}
+
+#contenedor {
+    max-width: 980px;
+    margin: clamp(18px, 4vh, 45px) auto;
+    padding: clamp(20px, 4vw, 44px);
+    border: 1px solid rgba(143, 193, 214, 0.18);
+    border-radius: 28px;
+    background: var(--panel);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(16px);
+}
+
+#nivel,
+#puntaje { color: var(--turquesa) !important; }
+
+#puntaje {
+    background: rgba(85, 234, 209, 0.1);
+    border: 1px solid rgba(85, 234, 209, 0.2);
+    box-shadow: none;
+}
+
+#temporizador {
+    color: var(--coral);
+    text-shadow: 0 0 22px rgba(255, 141, 112, 0.38);
+}
+
+#pregunta {
+    color: var(--texto) !important;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+#contenedor h1,
+#contenedor h2,
+#contenedor h3,
+#contenedor p { color: var(--texto) !important; }
+
+#contenedor > .fade-in > div[style*="color"] {
+    color: var(--turquesa) !important;
+}
+
+.opcion {
+    max-width: 780px;
+    border: 1px solid rgba(143, 193, 214, 0.22);
+    background: var(--panel-claro);
+    color: var(--texto);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+    text-align: left;
+}
+
+.opcion:hover:not(:disabled) {
+    background: rgba(36, 78, 101, 0.95);
+    border-color: var(--turquesa);
+    box-shadow: 0 8px 24px rgba(85, 234, 209, 0.14);
+}
+
+.correcta { background: #168b78 !important; border-color: var(--turquesa) !important; }
+.incorrecta { background: #b94e56 !important; border-color: var(--coral) !important; }
+
+button,
+.btn-accion {
+    background: linear-gradient(135deg, var(--turquesa), var(--turquesa-profundo));
+    color: #06221f;
+    box-shadow: 0 8px 18px rgba(23, 191, 169, 0.2);
+}
+
+button:hover:not(:disabled),
+.btn-accion:hover:not(:disabled) {
+    background: linear-gradient(135deg, #91f6e5, var(--turquesa));
+    box-shadow: 0 10px 24px rgba(85, 234, 209, 0.28);
+}
+
+#siguiente {
+    background: linear-gradient(135deg, var(--coral), #ee668b);
+    color: white;
+    box-shadow: 0 8px 20px rgba(255, 141, 112, 0.24);
+}
+
+.panel-comodines { margin: 20px 0; }
+
+.comodin {
+    background: rgba(169, 156, 255, 0.16);
+    border: 1px solid rgba(169, 156, 255, 0.5);
+    color: #ddd8ff;
+    box-shadow: none;
+}
+
+.comodin:hover:not(:disabled) { background: rgba(169, 156, 255, 0.3); }
+
+#resultado,
+.caja-explicacion,
+#ranking { color: var(--texto) !important; }
+
+.caja-explicacion,
+#ranking {
+    background: rgba(8, 21, 34, 0.7);
+    border-color: var(--turquesa);
+    box-shadow: none;
+}
+
+.caja-explicacion strong,
+.bono-aviso { color: var(--turquesa) !important; }
+
+.input-nombre {
+    border: 1px solid rgba(85, 234, 209, 0.4);
+    background: rgba(8, 21, 34, 0.8);
+    color: var(--texto);
+}
+
+.input-nombre::placeholder { color: #6f899d; }
+
+.btn-fullscreen {
+    background: rgba(169, 156, 255, 0.2);
+    border: 1px solid rgba(169, 156, 255, 0.45);
+    color: #eeeaff;
+    box-shadow: none;
+}
+
+@media (max-width: 600px) {
+    #contenedor { width: calc(100% - 20px); border-radius: 20px; }
+    .logo-esquina { top: 10px; left: 10px; width: 48px; height: 48px; }
+    header h1,
+    header p { padding-left: 58px; padding-right: 58px; }
+}
+
+@media (max-width: 600px) {
+    header { padding: 12px 5px; }
+    .btn-fullscreen { position: relative; right: auto; top: auto; transform: none; margin-top: 6px; display: inline-block; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <img class="logo-esquina" src="logo.png" alt="Logo Creciendo en amor para servir a otros">
+    <h1>MISIÓN NÍNIVE</h1>
+    <p>Desafío bíblico sobre el Libro de Jonás · 40 preguntas</p>
+    <button class="btn-fullscreen" onclick="toggleFullscreen()">📺 Pantalla Completa</button>
+</header>
+<div id="barra-progreso-contenedor"><div id="barra-progreso"></div></div>
+
+<div id="contenedor" class="fade-in"></div>
+
+<script>
+
+/* ========= BANCOS SEPARADOS POR NIVELES ========= */
+const preguntasFacil = [
+    { pregunta:"¿Cuál fue la orden que recibió Jonás de parte de Dios?", opciones:["Ir a la gran ciudad de Nínive y predicar contra su maldad","Ir a Tarsis a fundar una sinagoga","Construir un altar en Jope","Anunciar la venida del Mesías en Jerusalén"], correcta:0, explicacion:"Jonás 1:2 - Dios le ordenó ir a Nínive y predicar en contra de su maldad." },
+    { pregunta:"¿Cuál fue la reacción de Jonás ante la orden de Dios?", opciones:["Se levantó para huir de la presencia de Jehová hacia Tarsis","Obedeció de inmediato y partió a Nínive","Se escondió en el templo de Jerusalén","Pidió ayuda a los sacerdotes"], correcta:0, explicacion:"Jonás 1:3 - Jonás se levantó para huir de la presencia de Jehová y se fue hacia Tarsis." },
+    { pregunta:"¿Hacia dónde decidió ir Jonás en lugar de obedecer a Dios?", opciones:["Tarsis, ciudad en dirección opuesta a Nínive","Nínive, pero por otro camino","Jope, para quedarse a vivir allí","Egipto, huyendo del rey"], correcta:0, explicacion:"Jonás 1:3 - Jonás decidió ir hacia Tarsis, en dirección opuesta a Nínive." },
+    { pregunta:"¿Qué sucedió en el mar durante el viaje de Jonás?", opciones:["Se desató una gran tormenta que amenazaba con hundir el barco","El barco encalló en una isla desierta","El mar se calmó milagrosamente todo el viaje","Apareció una gran ballena junto al barco"], correcta:0, explicacion:"Jonás 1:4-5 - Se desató una gran tormenta y el barco estuvo a punto de naufragar." },
+    { pregunta:"¿Cuál fue la reacción de los marineros ante la tormenta?", opciones:["Tuvieron mucho miedo y cada uno clamó a sus dioses","Se rieron sin preocuparse por el peligro","Abandonaron el barco de inmediato","Culparon a Jonás sin investigar nada"], correcta:0, explicacion:"Jonás 1:5 - Los marineros tuvieron miedo y cada uno clamaba a su dios." },
+    { pregunta:"¿Qué hizo Jonás para intentar calmar la tormenta?", opciones:["Les dijo a los marineros que lo arrojaran al mar","Oró toda la noche en la cubierta","Ofreció su dinero a los marineros","Se lanzó él mismo al mar sin avisar"], correcta:0, explicacion:"Jonás 1:12 - Jonás les dijo que lo arrojaran al mar y así la tormenta se calmaría." },
+    { pregunta:"¿Qué propusieron los marineros como solución al problema?", opciones:["Echar suertes para saber quién era el culpable","Regresar de inmediato al puerto de Jope","Orar todos juntos a Jehová","Tirar toda la carga del barco al mar"], correcta:0, explicacion:"Jonás 1:7 - Propusieron echar suertes para saber por causa de quién venía el mal." },
+    { pregunta:"¿Qué reveló Jonás sobre su identidad y su desobediencia?", opciones:["Que era hebreo y huía de la presencia de Jehová","Que era un espía enviado por el rey","Que no creía en ningún dios","Que era un profeta falso de Nínive"], correcta:0, explicacion:"Jonás 1:9-10 - Reveló que era hebreo y que huía de la presencia de Jehová." },
+    { pregunta:"¿Qué decisión tomaron los marineros respecto a Jonás?", opciones:["Lo arrojaron al mar para salvar sus vidas","Lo encerraron en la bodega del barco","Lo devolvieron al puerto de Jope","Lo dejaron abandonado en una isla"], correcta:0, explicacion:"Jonás 1:15-16 - Los marineros lo tomaron y lo arrojaron al mar." },
+    { pregunta:"¿Qué sucedió con Jonás después de que fue arrojado al mar?", opciones:["Dios envió un gran pez que se lo tragó por tres días y tres noches","Nadó hasta llegar a la orilla","Se ahogó y Dios lo resucitó luego","Un ángel lo llevó volando hasta Nínive"], correcta:0, explicacion:"Jonás 1:17 - Dios preparó un gran pez que tragó a Jonás, quien estuvo tres días y tres noches en su vientre." },
+    { pregunta:"¿Qué mensaje recibió Jonás de parte de Dios por segunda vez?", opciones:["Ir a la gran ciudad de Nínive y proclamar el juicio que vendría","Regresar a Tarsis a terminar su viaje","Quedarse en el mar predicando a los peces","Ir a Jerusalén a orar en el templo"], correcta:0, explicacion:"Jonás 3:1-2 - Dios lo envió de nuevo a Nínive a proclamar el mensaje que Él le diría." },
+    { pregunta:"¿A qué ciudad fue enviado Jonás para predicar el mensaje de Dios?", opciones:["Nínive","Tarsis","Jope","Samaria"], correcta:0, explicacion:"Jonás 3:2 - Fue enviado a la gran ciudad de Nínive." },
+    { pregunta:"¿Cuál fue el contenido del mensaje que Jonás debía proclamar?", opciones:["Que en cuarenta días Nínive sería destruida","Que Nínive sería bendecida para siempre","Que el rey de Nínive moriría pronto","Que vendría una gran hambruna a la ciudad"], correcta:0, explicacion:"Jonás 3:4 - Proclamó que de aquí a cuarenta días Nínive sería destruida." }
+];
+
+const preguntasMedio = [
+    { pregunta:"¿Quién oró desde el vientre del pez?", opciones:["Jonás","Uno de los marineros","El rey de Nínive","Un ángel de Jehová"], correcta:0, explicacion:"Jonás 2:1 - Jonás oró a Jehová su Dios desde el vientre del pez." },
+    { pregunta:"¿Qué hizo Jonás desde las profundidades del Seol?", opciones:["Clamó a Dios","Maldijo su suerte","Guardó silencio","Pidió ayuda a los marineros"], correcta:0, explicacion:"Jonás 2:2 - Clamó a Jehová desde el seno del Seol y Él oyó su voz." },
+    { pregunta:"¿Cómo describió Jonás su experiencia en el mar?", opciones:["Arrojado a aguas turbulentas, rodeado de olas y corrientes","Flotando tranquilamente en calma total","Caminando sobre las aguas del mar","Rodeado de peces amistosos que lo guiaban"], correcta:0, explicacion:"Jonás 2:3-4 - Describió ser echado a las aguas profundas, rodeado de ondas y olas." },
+    { pregunta:"¿Con qué frase describió Jonás su condición emocional en el abismo?", opciones:["\"Mi alma desfallecía en mí\"","\"Mi corazón se alegraba\"","\"Nada temía en el abismo\"","\"Estaba en perfecta paz\""], correcta:0, explicacion:"Jonás 2:7 - 'Cuando mi alma desfallecía en mí, me acordé de Jehová'." },
+    { pregunta:"¿Qué esperanza expresó Jonás en su oración?", opciones:["Que Dios escuchara su clamor y lo liberara de las aguas y la muerte","Que los marineros regresaran a rescatarlo","Que el pez lo llevara directo a Nínive","Que muriera pronto para no sufrir más"], correcta:0, explicacion:"Jonás 2:2-7 - Expresó la esperanza de que Dios lo librara de las aguas y de la muerte." },
+    { pregunta:"¿Cómo describió Jonás a Jehová en su oración?", opciones:["Como \"el Dios verdadero\" que oye su voz","Como un dios lejano e indiferente","Como el dios protector de los marineros","Como un juez sin misericordia"], correcta:0, explicacion:"Jonás 2:2,9 - Lo describió como Aquel que oye su voz y como el Dios verdadero." },
+    { pregunta:"¿Qué hizo Jonás mientras estaba en el vientre del pez?", opciones:["Prometió cumplir sus votos y ofrecer sacrificios de acción de gracias","Escribió un libro sobre su viaje","Ayunó por cuarenta días completos","Durmió profundamente sin orar"], correcta:0, explicacion:"Jonás 2:9 - Prometió pagar lo que prometió y ofrecer sacrificio con voz de acción de gracias." },
+    { pregunta:"¿Cuál fue la respuesta de Dios a la oración de Jonás?", opciones:["Hizo que el pez lo vomitara en tierra seca","Lo dejó morir en las profundidades del mar","Envió un barco a rescatarlo","Lo transformó en un pez para siempre"], correcta:0, explicacion:"Jonás 2:10 - Jehová dio orden al pez, y este vomitó a Jonás en tierra." },
+    { pregunta:"¿Cómo describe Jonás su liberación del vientre del pez?", opciones:["Como un acto de misericordia y salvación de parte de Dios","Como una simple casualidad del destino","Como un castigo injusto de Dios","Como obra de los marineros que lo salvaron"], correcta:0, explicacion:"Jonás 2:6-7 - Describió su liberación como la salvación que Jehová le concedió." },
+    { pregunta:"¿Cuál fue la actitud de Jonás hacia Dios después de su liberación?", opciones:["Renovó su compromiso de cumplir sus votos y ofrecer sacrificios","Se alejó de Dios nuevamente","Cuestionó abiertamente su llamado","Pidió otra señal antes de obedecer"], correcta:0, explicacion:"Jonás 2:9 - Renovó su compromiso de pagar lo prometido a Jehová." },
+    { pregunta:"¿Cómo reaccionaron los habitantes de Nínive al mensaje de Jonás?", opciones:["Creyeron a Dios, proclamaron ayuno y se vistieron de cilicio","Se burlaron de Jonás y lo ignoraron","Lo expulsaron de inmediato de la ciudad","Ignoraron el mensaje por completo"], correcta:0, explicacion:"Jonás 3:5-6 - Los ninivitas creyeron a Dios, proclamaron ayuno y se vistieron de cilicio." },
+    { pregunta:"¿Qué hizo el rey de Nínive después de escuchar el mensaje de Jonás?", opciones:["Se levantó de su trono, se cubrió de cilicio y se sentó en ceniza","Mandó apresar y matar a Jonás","Declaró la guerra contra Israel","Ignoró por completo el mensaje"], correcta:0, explicacion:"Jonás 3:6-9 - El rey se levantó de su trono, se cubrió de cilicio, se sentó en ceniza y proclamó ayuno." },
+    { pregunta:"¿Cómo describen los versículos la vestimenta y el ayuno que se impuso en Nínive?", opciones:["Personas y animales debían vestir cilicio y abstenerse de comida y agua","Solo el rey estaba obligado a ayunar","Únicamente los sacerdotes debían ayunar","Se prohibió solamente comer carne de cerdo"], correcta:0, explicacion:"Jonás 3:5,7 - Tanto personas como animales debían vestir cilicio y abstenerse de comida y agua." },
+    { pregunta:"¿Cuál fue la respuesta de Dios ante la respuesta de Nínive al mensaje?", opciones:["Vio sus obras y no ejecutó el juicio que había anunciado","Destruyó la ciudad de todas formas","Envió a otro profeta a confirmar el juicio","Esperó otros cuarenta días para decidir"], correcta:0, explicacion:"Jonás 3:10 - Dios vio que se habían apartado de su mal camino y no ejecutó el mal anunciado." }
+];
+
+const preguntasDificil = [
+    { pregunta:"¿Cómo se sintió Jonás ante la misericordia de Dios hacia Nínive?", opciones:["Se enojó y se disgustó mucho","Se alegró profundamente por ellos","Sintió total indiferencia","Se sintió orgulloso de su labor"], correcta:0, explicacion:"Jonás 4:1 - Pero Jonás se apesadumbró en extremo y se enojó." },
+    { pregunta:"¿Cuál fue la lección principal que Dios enseñó a Jonás a través de esta experiencia?", opciones:["Su compasión hacia los arrepentidos, incluso las ciudades paganas","La importancia de la obediencia ciega ante todo","El castigo severo a los desobedientes","La superioridad de Israel sobre otras naciones"], correcta:0, explicacion:"Jonás 4:10-11 - Dios le mostró su compasión hacia Nínive y su preocupación por sus habitantes." },
+    { pregunta:"¿Cómo concluye el capítulo 3 de Jonás?", opciones:["Dios perdona a Nínive y no ejecuta el juicio anunciado","Nínive es destruida por completo","Jonás muere dentro de la ciudad","El rey se convierte en profeta de Jehová"], correcta:0, explicacion:"Jonás 3:10 - Dios se arrepintió del mal que había dicho que les haría, y no lo hizo." },
+    { pregunta:"¿Cuál fue la reacción de Jonás ante el perdón de Dios hacia Nínive?", opciones:["Se enojó y se disgustó mucho","Se alegró y dio gracias a Dios","Se sintió aliviado y en paz","No mostró ninguna reacción"], correcta:0, explicacion:"Jonás 4:1 - Jonás se apesadumbró en extremo y se enojó." },
+    { pregunta:"¿Por qué se enojó Jonás y se disgustó mucho?", opciones:["Porque sabía que Dios era misericordioso y temía que perdonara a Nínive","Porque quería quedarse más tiempo en la ciudad","Porque el rey de Nínive lo insultó","Porque perdió su túnica en el viaje"], correcta:0, explicacion:"Jonás 4:2 - Sabía que Dios es clemente y misericordioso, y temía que se arrepintiera del mal." },
+    { pregunta:"¿Qué hizo Jonás después de salir de la ciudad de Nínive?", opciones:["Se sentó al este de la ciudad y construyó una enramada","Regresó de inmediato al puerto de Jope","Se quedó a vivir dentro de Nínive","Volvió al mar en busca de otro barco"], correcta:0, explicacion:"Jonás 4:5 - Salió y se sentó hacia el oriente de la ciudad, y se hizo allí una enramada." },
+    { pregunta:"¿Qué ocurrió con la planta de ricino que Dios hizo crecer para dar sombra a Jonás?", opciones:["Un gusano la atacó y la planta se secó","Creció para siempre dando sombra eterna","Fue cortada por el propio Jonás","Se convirtió en un gran árbol"], correcta:0, explicacion:"Jonás 4:7 - Dios preparó un gusano que hirió la planta, y esta se secó." },
+    { pregunta:"¿Cómo reaccionó Jonás ante la pérdida de la planta de ricino?", opciones:["Se enojó y deseó la muerte","Se alegró de perderla","Buscó otra sombra sin quejarse","Agradeció a Dios de todas formas"], correcta:0, explicacion:"Jonás 4:8 - Deseó la muerte, diciendo que mejor era morir que vivir." },
+    { pregunta:"¿Cuál fue el propósito de Dios al enviar una lombriz para dañar la planta de ricino?", opciones:["Enseñarle a Jonás una lección sobre su compasión hacia Nínive","Castigar a Jonás por su desobediencia inicial","Probar la fe de los habitantes de Nínive","Advertir sobre una plaga futura en la región"], correcta:0, explicacion:"Jonás 4:10-11 - Dios usó el episodio para mostrarle su compasión por las personas y el ganado de Nínive." },
+    { pregunta:"¿Qué lección quiso enseñar Dios a Jonás a través de la planta de ricino y la lombriz?", opciones:["Que Jonás también debía tener compasión por los demás, como Dios la tiene","Que las plantas son más importantes que las personas","Que Jonás debía cuidar mejor sus pertenencias","Que Dios castiga sin excepción toda desobediencia"], correcta:0, explicacion:"Jonás 4:11 - Dios le mostró que Él tiene compasión de quienes no distinguen su mano derecha de su izquierda." },
+    { pregunta:"¿Cómo responde Jonás a la pregunta de Dios al final del capítulo?", opciones:["No da una respuesta directa; el libro termina con la pregunta de Dios","Pide perdón inmediatamente y se arrepiente","Va corriendo a evangelizar de nuevo a Nínive","Discute con Dios y se justifica extensamente"], correcta:0, explicacion:"Jonás 4:11 - El libro termina con la pregunta de Dios, sin que se registre respuesta de Jonás." },
+    { pregunta:"¿Cuál es el mensaje principal del capítulo 4 de Jonás?", opciones:["La compasión y misericordia de Dios hacia todos los seres humanos","La importancia de construir enramadas para protegerse del sol","El valor del ayuno estricto en tiempos de crisis","La superioridad de los profetas sobre los reyes"], correcta:0, explicacion:"Jonás 4:10-11 - El capítulo resalta la compasión de Dios incluso hacia quienes parecen no merecerla." },
+    { pregunta:"¿Cómo termina el libro de Jonás?", opciones:["Termina abruptamente con la pregunta de Dios a Jonás, sin respuesta explícita","Termina con la muerte de Jonás en el desierto","Termina con la destrucción final de Nínive","Termina con una gran fiesta de celebración"], correcta:0, explicacion:"Jonás 4:11 - El libro concluye con la pregunta retórica de Dios, dejando la reflexión al lector." }
+];
+
+/* ========= CONFIGURACIÓN Y ESTADO ========= */
+let juego = [];
+let indice = 0;
+let puntaje = 0;
+let tiempoRestante = 90;
+let tiempoObjetivo = 0;
+let relojPausado = false;
+let intervaloPreciso = null;
+let nombreJugador = "Invitado";
+let tiempoInicioPregunta = 0; // Marca cuándo se mostró la pregunta actual (para el bono de velocidad)
+
+const TIEMPO_TOTAL_JUEGO = 120; // 2 minutos para todo el desafío
+
+let usado5050 = false;
+
+/* ========= AUDIO ========= */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(tipo) {
+    if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+    const now = audioCtx.currentTime;
+
+    if (tipo === 'correcto') {
+        [440, 554.37, 659.25, 880].forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.08);
+            gain.gain.setValueAtTime(0.15, now + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.25);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + 0.25);
+        });
+    } else if (tipo === 'incorrecto') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.4);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.4);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + 0.4);
+    } else if (tipo === 'comodin') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.25);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.25);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + 0.25);
+    } else if (tipo === 'tic') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, now);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + 0.04);
+    } else if (tipo === 'ganar') {
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.12);
+            gain.gain.setValueAtTime(0.2, now + i * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.4);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.12); osc.stop(now + i * 0.12 + 0.4);
+        });
+    }
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            alert(`Pantalla completa no disponible: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+function mezclar(arr){
+    const copia = [...arr];
+    for (let i = copia.length - 1; i > 0; i--) {
+        const indiceAleatorio = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[indiceAleatorio]] = [copia[indiceAleatorio], copia[i]];
+    }
+    return copia;
+}
+
+/* ========= TEMPORIZADOR ========= */
+function iniciarTemporizador(segundos) {
+    detenerTemporizador();
+    tiempoRestante = segundos;
+    tiempoObjetivo = performance.now() + (segundos * 1000);
+    relojPausado = false;
+
+    intervaloPreciso = setInterval(() => {
+        if (relojPausado) return;
+
+        const ahora = performance.now();
+        const diferencia = Math.ceil((tiempoObjetivo - ahora) / 1000);
+        tiempoRestante = Math.max(0, diferencia);
+
+        const tempElement = document.getElementById("temporizador");
+        if (tempElement) {
+            tempElement.innerText = tiempoRestante;
+            if (tiempoRestante <= 5 && tiempoRestante > 0) {
+                tempElement.classList.add("tiempo-critico");
+                playSound('tic');
+            } else {
+                tempElement.classList.remove("tiempo-critico");
+            }
+        }
+
+        if (tiempoRestante <= 0) {
+            detenerTemporizador();
+            procesarTiempoAgotadoGeneral();
+        }
+    }, 200);
+}
+
+function pausarTemporizador() {
+    if (!relojPausado) { relojPausado = true; }
+}
+
+function reanudarTemporizador() {
+    if (relojPausado) {
+        tiempoObjetivo = performance.now() + (tiempoRestante * 1000);
+        relojPausado = false;
+    }
+}
+
+function agregarTiempo(segundosExtra) {
+    tiempoRestante += segundosExtra;
+    tiempoObjetivo += (segundosExtra * 1000);
+    const tempElement = document.getElementById("temporizador");
+    if (tempElement) tempElement.innerText = tiempoRestante;
+}
+
+function detenerTemporizador() {
+    if (intervaloPreciso) {
+        clearInterval(intervaloPreciso);
+        intervaloPreciso = null;
+    }
+}
+
+/* ========= LÓGICA DE JUEGO ========= */
+function mostrarPantallaInicio() {
+    detenerTemporizador();
+    usado5050 = false;
+    document.getElementById("barra-progreso").style.width = "0%";
+    document.getElementById("contenedor").innerHTML = `
+        <div class="fade-in">
+            <h2 style="font-size: clamp(1.4rem, 3vw, 2.2rem); color:#8a1150;">¡Tu misión comienza aquí!</h2>
+            <p style="font-size: clamp(1rem, 1.8vw, 1.3rem); color:#6d1240;">Pon a prueba tu conocimiento sobre Jonás y Nínive.</p>
+            <input type="text" id="nombreInput" class="input-nombre" placeholder="Nombre o Apodo" maxlength="15"><br>
+            <button onclick="validarYComenzar()">💐 Comenzar Desafío</button>
+            <div id="ranking">
+                <h3>Mejores Puntajes</h3>
+                <ol id="listaRanking" style="padding-left: 20px; text-align: left; display: inline-block;"></ol>
+            </div>
+        </div>
+    `;
+    mostrarRanking();
+}
+
+function validarYComenzar() {
+    const input = document.getElementById("nombreInput").value.trim();
+    if(input === "") { alert("Por favor, introduce tu nombre."); return; }
+    nombreJugador = input;
+    audioCtx.resume();
+    iniciarJuego();
+}
+
+function iniciarJuego(){
+    // Une las 3 listas de niveles y las mezcla TODAS juntas para que el orden sea 100% al azar
+    const bancoCompleto = [...preguntasFacil, ...preguntasMedio, ...preguntasDificil];
+    const bancoMezclado = mezclar(bancoCompleto);
+
+    // Mapea las preguntas barajando también las opciones
+    juego = bancoMezclado.map(p => {
+        const textoCorrecta = p.opciones[p.correcta];
+        const opcionesMezcladas = mezclar(p.opciones);
+        return { 
+            pregunta: p.pregunta, 
+            opciones: opcionesMezcladas, 
+            correcta: opcionesMezcladas.indexOf(textoCorrecta),
+            explicacion: p.explicacion
+        };
+    });
+
+    indice = 0; puntaje = 0;
+
+    document.getElementById("contenedor").innerHTML = `
+        <div class="fade-in">
+            <div id="nivel"></div>
+            <div id="puntaje">Puntaje: 0</div>
+            <div style="font-size: clamp(0.8rem, 1.4vw, 1.05rem); color:#8a1150; font-weight:bold; margin-bottom:-6px;">⏳ TIEMPO GENERAL DEL DESAFÍO</div>
+            <div id="temporizador">90</div>
+            
+            <div class="panel-comodines">
+                <button id="c5050" class="comodin" onclick="usar5050()">50 / 50</button>
+            </div>
+
+            <div id="pregunta"></div>
+            <div id="opciones-contenedor">
+                <div id="opciones"></div>
+            </div>
+            <div id="visual-comodin"></div>
+            <div id="resultado"></div>
+            <button id="siguiente" onclick="avanzarPregunta()">Siguiente Pregunta</button>
+        </div>
+    `;
+    iniciarTemporizador(TIEMPO_TOTAL_JUEGO); // Cronómetro único para TODO el desafío (2 minutos)
+    mostrarPregunta();
+}
+
+function mostrarPregunta(){
+    document.getElementById("barra-progreso").style.width = `${(indice / juego.length) * 100}%`;
+    document.getElementById("opciones").style.display = "block";
+
+    const p = juego[indice];
+    document.getElementById("nivel").innerText = `Pregunta ${indice+1} de ${juego.length}`;
+    document.getElementById("puntaje").innerHTML = `Puntaje: <strong>${puntaje}</strong>`;
+    document.getElementById("pregunta").innerText = p.pregunta;
+
+    let html="";
+    p.opciones.forEach((o,i)=>{ html += `<button class="opcion" onclick="responder(${i})">${o}</button>`; });
+
+    document.getElementById("opciones").innerHTML = html;
+    document.getElementById("resultado").innerHTML = "";
+    document.getElementById("visual-comodin").innerHTML = "";
+    document.getElementById("siguiente").style.display = "none";
+    actualizarVisualComodines();
+
+    // Ya no hay cronómetro por pregunta: solo se registra el instante para calcular el bono de velocidad
+    tiempoInicioPregunta = performance.now();
+}
+
+function actualizarVisualComodines() {
+    if(usado5050) { document.getElementById("c5050").disabled = true; document.getElementById("c5050").style.opacity = "0.3"; }
+}
+
+function responder(op){
+    // El cronómetro general sigue corriendo: es el único tiempo de todo el desafío
+    const p = juego[indice];
+    const botones = document.querySelectorAll(".opcion");
+    botones.forEach(b => b.disabled = true);
+
+    if(op === p.correcta){
+        playSound('correcto');
+        const segundosRespuesta = (performance.now() - tiempoInicioPregunta) / 1000;
+        let basePuntos = 100;
+        let textoBono = "";
+        let bono = 0;
+        if (segundosRespuesta <= 3) {
+            bono = 50;
+            textoBono = `<span class="bono-aviso">⚡⚡⚡ ¡Respuesta Relámpago! +${bono} pts</span>`;
+        } else if (segundosRespuesta <= 6) {
+            bono = 30;
+            textoBono = `<span class="bono-aviso">⚡⚡ ¡Muy Rápido! +${bono} pts</span>`;
+        } else if (segundosRespuesta <= 10) {
+            bono = 15;
+            textoBono = `<span class="bono-aviso">⚡ ¡Bono de Velocidad! +${bono} pts</span>`;
+        }
+        basePuntos += bono;
+        botones[op].classList.add("correcta");
+        puntaje += basePuntos;
+        document.getElementById("puntaje").innerHTML = `Puntaje: <strong>${puntaje}</strong>`;
+        document.getElementById("resultado").innerHTML = `
+            ✅ ¡Respuesta Correcta! ${textoBono}
+            <div class="caja-explicacion">💡 <strong>Cita Bíblica:</strong> ${p.explicacion}</div>
+        `;
+        document.getElementById("siguiente").style.display = "inline-block";
+    }else{
+        playSound('incorrecto');
+        botones[op].classList.add("incorrecta");
+        botones[p.correcta].classList.add("correcta");
+        document.getElementById("resultado").innerHTML = `
+            ❌ Respuesta Incorrecta.<br>La opción correcta era: <strong>${p.opciones[p.correcta]}</strong>
+            <div class="caja-explicacion">💡 <strong>Cita Bíblica:</strong> ${p.explicacion}</div>
+        `;
+        document.getElementById("siguiente").style.display = "inline-block";
+    }
+}
+
+function procesarTiempoAgotadoGeneral() {
+    playSound('incorrecto');
+    document.querySelectorAll(".opcion").forEach(b => b.disabled = true);
+    guardarRanking();
+    document.getElementById("contenedor").innerHTML = `
+        <div class="fade-in">
+            <h1 style="font-size: clamp(1.8rem, 4vw, 3rem); color:#c8102e;">⏱️ ¡Se acabó el tiempo!</h1>
+            <h3 style="color:#6d1240;">Tus 2 minutos terminaron, ${nombreJugador}. Llegaste a la pregunta ${indice + 1} de ${juego.length}.</h3>
+            <h2 style="color:#6d1240;">Puntaje total: <span style="color:#c8447a;">${puntaje} Pts</span></h2>
+            <button onclick="mostrarPantallaInicio()" style="margin-top:20px;">Intentar nuevamente</button>
+        </div>
+    `;
+}
+
+function avanzarPregunta(){
+    indice++;
+    if(indice >= juego.length){ ganar(); return; }
+    const contenedor = document.getElementById("contenedor");
+    contenedor.classList.remove("fade-in");
+    void contenedor.offsetWidth;
+    contenedor.classList.add("fade-in");
+    mostrarPregunta();
+}
+
+/* ========= COMODINES ========= */
+function usar5050(){
+    if(usado5050) return;
+    usado5050 = true; 
+    playSound('comodin'); 
+    actualizarVisualComodines();
+    
+    const p = juego[indice];
+    const botones = document.querySelectorAll(".opcion");
+    let incorrectas=[];
+    for(let i=0; i<p.opciones.length; i++){
+        if(i!==p.correcta){ incorrectas.push(i); }
+    }
+    incorrectas = mezclar(incorrectas);
+    botones[incorrectas[0]].style.visibility="hidden";
+    botones[incorrectas[1]].style.visibility="hidden";
+}
+
+/* ========= RANKING ========= */
+// Se cambió la clave de almacenamiento a "jonas_diamadres_v1" para que el historial
+// de puntajes anteriores quede oculto. A partir de ahora, los nuevos puntajes
+// se guardan y se acumulan normalmente cada vez que se juega (no se borran).
+const CLAVE_RANKING = "jonas_diamadres_v1";
+
+function guardarRanking(){
+    let ranking = JSON.parse(localStorage.getItem(CLAVE_RANKING)) || [];
+    ranking.push({ nombre: nombreJugador, puntaje: puntaje });
+    ranking.sort((a,b) => b.puntaje - a.puntaje);
+    ranking = ranking.slice(0,5);
+    localStorage.setItem(CLAVE_RANKING, JSON.stringify(ranking));
+}
+
+function mostrarRanking(){
+    let ranking = JSON.parse(localStorage.getItem(CLAVE_RANKING)) || [];
+    let html="";
+    if(ranking.length === 0) { html = "<li>Nadie ha jugado aún. ¡Inaugura la lista!</li>"; } 
+    else { ranking.forEach(r=>{ html += `<li><strong>${r.nombre}</strong>: ${r.puntaje} Pts</li>`; }); }
+    document.getElementById("listaRanking").innerHTML=html;
+}
+
+function ganar(){
+    detenerTemporizador();
+    playSound('ganar');
+    guardarRanking();
+    document.getElementById("barra-progreso").style.width = "100%";
+    document.getElementById("contenedor").innerHTML= `
+        <div class="fade-in">
+            <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); color:#c8447a;">🏆 ¡MISIÓN COMPLETADA! 🏆</h1>
+            <h2 style="color:#6d1240;">Felicidades, ${nombreJugador.toUpperCase()}. Has respondido las 40 preguntas del libro de Jonás.</h2>
+            <h3 style="color:#6d1240;">Puntaje Acumulado: <span style="color:#c8447a; font-size: clamp(1.5rem, 3vw, 2.5rem);">${puntaje} Pts</span></h3>
+            <p style="color:#6d1240; font-size: clamp(0.95rem, 1.6vw, 1.15rem);">✨ Has recorrido el camino de Jonás con éxito. ✨</p>
+            <button onclick="mostrarPantallaInicio()" style="margin-top:20px;">Volver al Inicio</button>
+        </div>
+    `;
+}
+
+
+
+mostrarPantallaInicio();
+</script>
+</body>
+</html>
