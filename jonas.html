@@ -32,6 +32,7 @@ body {
 }
 
 header {
+    position: relative;
     background: linear-gradient(135deg, #e0578f, #c8447a);
     padding: clamp(10px, 2vh, 25px) 15px;
     box-shadow: 0 4px 20px rgba(140,20,70,.35);
@@ -350,7 +351,7 @@ h1 {
 }
 
 header p { color: var(--texto-suave); }
-.btn-portada { position: absolute; top: 16px; left: 18px; padding: 8px 13px; color: var(--texto); border: 1px solid rgba(85, 234, 209, .35); border-radius: 9px; background: rgba(85, 234, 209, .1); font-size: 12px; font-weight: 700; text-decoration: none; }
+.btn-portada { position: absolute; top: 16px; right: 18px; z-index: 5; padding: 10px 16px; color: #06221f; border: 2px solid var(--turquesa); border-radius: 11px; background: var(--turquesa); box-shadow: 0 5px 18px rgba(0, 0, 0, .35), 0 0 18px rgba(85, 234, 209, .3); font-size: 13px; font-weight: 800; text-decoration: none; }
 header h1, header p { padding-left: 90px; }
 
 #barra-progreso-contenedor { height: 7px; background: #10283c; }
@@ -502,7 +503,7 @@ button:hover:not(:disabled),
     .logo-esquina { top: 10px; left: 10px; width: 48px; height: 48px; }
     header h1,
     header p { padding-left: 58px; padding-right: 58px; }
-    .btn-portada { top: 12px; left: 68px; }
+    .btn-portada { top: 10px; right: 10px; padding: 9px 12px; }
 }
 
 @media (max-width: 600px) {
